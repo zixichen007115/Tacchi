@@ -337,8 +337,8 @@ class SimulationApproach:
         # cv2.imwrite('object_depth.png', obj_depth)
         not_in_touch, in_touch = self.segments(obj_depth)
         protrusion_depth = self.protrusion_map(obj_depth, not_in_touch)
-        # elastomer_depth = protrusion_depth
-        elastomer_depth = self.apply_elastic_deformation(protrusion_depth, not_in_touch, in_touch)
+        elastomer_depth = protrusion_depth
+        # elastomer_depth = self.apply_elastic_deformation(protrusion_depth, not_in_touch, in_touch)
 
         textured_elastomer_depth = gaus_noise(elastomer_depth, self.texture_sigma)
 
