@@ -33,7 +33,7 @@ To evaluate simulation images,
 `python -m experiments.preparation.loss_eval`
 
 ## 4_Sim2Real
-This package applied ResNet18 to classifier images and evaluate images with Sim2Real tasks. The images form real images, [Gelsight Simulation](https://github.com/danfergo/gelsight_simulation), and **2_Tacchi_image_generation** should be put in this package. To train a ResNet, 
+This package applied ResNet18 to classifier images and evaluate images with Sim2Real tasks. The images form real experiments, [Gelsight Simulation](https://github.com/danfergo/gelsight_simulation), and **2_Tacchi_image_generation** should be put in this package. To train a ResNet, 
 
 `python main.py --mode train --img_kind [image kind] --model_name [model name]`
 
