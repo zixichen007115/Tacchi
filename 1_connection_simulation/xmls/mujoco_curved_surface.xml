@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mujoco>
+	<asset>
+		<mesh file="stls/gelsight2014_front.stl" name="front" scale="0.001 0.001 0.001"></mesh>
+		<mesh file="stls/gelsight2014_back.stl" name="back" scale="0.001 0.001 0.001"></mesh>
+		<mesh file="stls/curved_surface.stl" name="object" scale="0.001 0.001 0.001"></mesh>
+
+	</asset>
+	<worldbody>
+
+<!-- probe -->
+		<body name="probe" pos="0 0 0.059" euler="180 0 0">
+			<geom type="mesh" mesh="object" name="object_geom" rgba="0 1 0 1"></geom>
+			<joint name="slide0" axis="0 0 1" damping="0"  pos="0 0 0" type="slide"/>
+			<joint name="slide1" axis="0 1 0" damping="0"  pos="0 0 0" type="slide"/>
+			<joint name="slide2" axis="1 0 0" damping="0"  pos="0 0 0" type="slide"/>
+		</body>
+
+<!-- back case, front case, glass, and gel -->
+		<body name="back_link" pos="0 0 0" euler="0 0 0" >
+			<geom type="mesh" mesh="back" name="back_geom" rgba="1 0 0 1"></geom>
+			<body name="front_link" pos="0 0 0" >
+				<geom type="mesh" mesh="front" name="front_geom" rgba="1 0 0 1"></geom>
+				<body name="glass" pos="0 0 0.023">
+					<geom rgba="1 1 1 0.3" size="0.01 0.01 0.011" type="box" ></geom>
+					<body name="gel" pos="0 0 0.013">
+						<geom type="box" size="0.01 0.01 0.002" rgba ="1 1 1 0.5" ></geom>
+					</body>
+				</body>
+			</body>
+		</body>
+
+	</worldbody>
+	<actuator>
+        <velocity joint="slide0"/>
+    </actuator>
+    <contact>
+    	<exclude body1 = "probe" body2 = "gel"></exclude>
+    </contact>
+    <option timestep = "0.0001">
+    	<flag gravity = "disable" ></flag>
+    </option>
+
+</mujoco>
