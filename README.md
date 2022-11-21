@@ -33,7 +33,7 @@ To evaluate simulation images,
 `python -m experiments.preparation.loss_eval`
 
 ## 4_AA21
-This package applied depth map smoothing method applied in [18]([https://ieeexplore.ieee.org/abstract/document/9561122) to generate tactile images. To generate images,
+This package applied depth map smoothing method applied in [18](https://ieeexplore.ieee.org/abstract/document/9561122) to generate tactile images. To generate images,
 
 `python data_loader_AA21.py`
 
