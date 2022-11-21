@@ -36,6 +36,8 @@ class Solver(object):
         self.beta2 = config.beta2
         self.resume_iters = config.resume_iters
         self.model_name = config.model_name
+        self.img_kind = config.img_kind
+
 
         # Test configurations.
         self.test_iters = config.test_iters
@@ -54,8 +56,7 @@ class Solver(object):
 
         # Build the model and tensorboard.
         self.build_model()
-        if self.use_tensorboard:
-            self.build_tensorboard()
+
 
     def denorm(self, x):
         """Convert the range from [-1, 1] to [0, 1]."""
@@ -133,6 +134,8 @@ class Solver(object):
 
     def train(self):
         """Train ResNet within a single dataset."""
+        
+        
         data_loader = self.loader
 
         # Fetch fixed inputs for debugging.
@@ -184,6 +187,8 @@ class Solver(object):
 
             # Backward and optimize.
             r_loss =  d_loss_cls
+            loss = r_loss.cpu().detach().numpy()
+                
             self.reset_grad()
             r_loss.backward()
             self.r_optimizer.step()
@@ -218,13 +223,14 @@ class Solver(object):
 
 
     def test(self):
+        f = open("acc_"+self.model_name+".txt","a")
 
         # Load the trained classifier.
         self.restore_model(self.test_iters)
 
         # Load the dataset.
         data_loader = self.loader
-        test_len = len(data_loade)# Load the dataset.r.dataset.test_dataset)
+        test_len = len(data_loader.dataset)# Load the dataset.r.dataset.test_dataset)
 
         # calculate test acc
         with torch.no_grad():
@@ -256,13 +262,17 @@ class Solver(object):
                     right_sample[k] = res_matrix[k,k]
                     ratio[k] = right_sample[k]/sum_sample[k]*100
                 print(np.mean(ratio))
+            f.write(str(np.mean(ratio)))
+            f.write("\n")
+
+
 
 
                 # plot confusion matrix
-                cm = confusion_matrix(y_true[:num], y_pred[:num])
-                disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-                disp.plot()
-                img_name = self.model_name+"2"+self.img_kind+".png"
-                plt.savefig(img_name)
+                # cm = confusion_matrix(y_true[:num], y_pred[:num])
+                # disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+                # disp.plot()
+                # img_name = self.model_name+"2"+self.img_kind+".png"
+                # plt.savefig(img_name)
 
 

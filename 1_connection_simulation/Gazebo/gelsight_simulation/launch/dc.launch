@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="update" default="false"/>
+    <arg name="sim" default="false"/>
+
+    <arg name="solid" default="wave1"/>
+    <arg name="rotation" default="$(eval 0)"/> <!-- pi/2 -->
+
+<!--    <arg name="solid" default="dots"/>-->
+<!--    <arg name="rotation" default="$(eval -pi)"/>-->
+
+    <!--        <arg name="solid" value="cross_lines"/>-->
+    <!--        <arg name="rotation" value="$(eval pi/2)"/>-->
+
+    <!--    <arg name="solid" value="flat_slab"/>-->
+    <!--    <arg name="rotation" value="$(eval pi/2)"/>-->
+
+    <!--        <arg name="solid" value="curved_surface"/>-->
+    <!--        <arg name="rotation" value="$(eval pi/2)"/>-->
+
+    <!--        <arg name="solid" value="parallel_lines"/>-->
+    <!--        <arg name="rotation" value="$(eval pi)"/>-->
+
+    <!--        <arg name="solid" value="pacman"/>-->
+    <!--        <arg name="rotation" value="$(eval pi/2)"/>-->
+
+    <!--        <arg name="solid" value="torus"/>-->
+    <!--        <arg name="rotation" value="$(eval pi/2)"/>-->
+
+    <!--            <arg name="solid" value="cylinder_shell"/>-->
+    <!--            <arg name="rotation" value="$(eval pi/2)"/>-->
+
+    <!--        <arg name="solid" value="sphere2"/>-->
+    <!--        <arg name="rotation" value="$(eval pi/2)"/>-->
+
+    <!--        <arg name="solid" value="line"/>-->
+    <!--        <arg name="rotation" value="$(eval pi/2)"/>-->
+
+    <!--        <arg name="solid" value="cylinder_side"/>-->
+    <!--        <arg name="rotation" value="$(eval pi/2)"/>-->
+
+    <!--        <arg name="solid" value="moon"/>-->
+    <!--        <arg name="rotation" value="$(eval pi/2)"/>-->
+
+    <!--            <arg name="solid" value="random"/>-->
+    <!--            <arg name="rotation" value="$(eval pi)"/>-->
+
+    <!--            <arg name="solid" value="prism"/>-->
+    <!--            <arg name="rotation" value="$(eval pi)"/>-->
+
+    <!--            <arg name="solid" value="dot_in"/>-->
+    <!--            <arg name="rotation" value="$(eval pi)"/>-->
+
+    <!--        <arg name="solid" value="triangle"/>-->
+    <!--        <arg name="rotation" value="$(eval -pi/2)"/>-->
+
+    <!--        <arg name="solid" value="sphere"/>-->
+    <!--        <arg name="rotation" value="$(eval -pi/2)"/>-->
+
+    <!--        <arg name="solid" value="hexagon"/>-->
+    <!--        <arg name="rotation" value="$(eval -pi/2)"/>-->
+
+    <!--        <arg name="solid" value="cylinder"/>-->
+    <!--        <arg name="rotation" value="$(eval -pi/2)"/>-->
+
+    <!--        <arg name="solid" value="cone"/>-->
+    <!--        <arg name="rotation" value="$(eval -pi/2)"/>-->
+
+    <include if="$(eval not arg('update') and arg('sim'))"
+             file="$(find gazebo_ros)/launch/empty_world.launch"/>
+
+    <param name="robot_description"
+           command="$(find xacro)/xacro --inorder '$(find gelsight_simulation)/models/setup.xacro'
+           solid_name:=$(arg solid) rotation_rad:=$(arg rotation)"/>
+
+    <include file="$(find fdm_printer_bringup)/launch/bringup.launch">
+        <arg name="update" value="$(arg update)"/>
+        <arg name="sim" value="$(arg sim)"/>
+        <arg name="robot_description" value="robot_description"/>
+    </include>
+
+    <!--    <node name="dc"-->
+    <!--          pkg="gelsight_simulation"-->
+    <!--          type="data_collection.py"-->
+    <!--          output="screen"/>-->
+
+    <!-- IN SIMULATION -->
+
+    <group if="$(arg sim)">
+        <node unless="$(arg update)"
+              name="gelsight_sim"
+              pkg="gelsight_gazebo"
+              type="gelsight_driver.py"/>
+    </group>
+
+
+    <!-- IN REAL WORLD -->
+    <group unless="$(arg sim)">
+        <node unless="$(arg update)"
+              name="gelsight_driver"
+              pkg="gelsight_simulation"
+              type="gelsight_driver.py"/>
+    </group>
+
+</launch>

@@ -17,12 +17,13 @@ def main(config):
     if not os.path.exists(config.model_save_dir):
         os.makedirs(config.model_save_dir)
 
-    image_dir = "data/"+config.img_kind
+    image_dir = "data_g/"+config.img_kind
 
     # Data loader.
     loader = get_loader(image_dir, 
         config.crop_size, config.image_size, config.batch_size,
         config.mode, config.num_workers)
+
 
 
     # Solver for training and testing StarGAN.
@@ -40,7 +41,7 @@ if __name__ == '__main__':
     # Model configuration.
 
     parser.add_argument('--dim', type=int, default=21, help='dimension of domain labels')
-    parser.add_argument('--crop_size', type=int, default=480, help='crop size for the dataset')
+    parser.add_argument('--crop_size', type=int, default=440, help='crop size for the dataset')
     parser.add_argument('--image_size', type=int, default=256, help='image resolution')
 
     
@@ -59,10 +60,11 @@ if __name__ == '__main__':
     # Miscellaneous.
     parser.add_argument('--num_workers', type=int, default=1)
     parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
-    parser.add_argument('--use_tensorboard', type=str2bool, default=True)
+    parser.add_argument('--use_tensorboard', type=str2bool, default=False)
 
     # Directories.
-    parser.add_argument('--img_kind', type=str, default='real', choices=['real', 'sim_5', 'sim_20', 'sim_100', 'sim_DG21'])
+    parser.add_argument('--img_kind', type=str, default='real')
+    # , choices=['real', 'sim_1', 'sim_10', 'sim_100', 'sim_DG21'])
     parser.add_argument('--log_dir', type=str, default='result/logs')
     parser.add_argument('--model_save_dir', type=str, default='result/models')
 

@@ -28,6 +28,8 @@ for f in file:
     
 
     for i in range(np.shape(npy_file)[0]):
+        tmp = np.reshape(npy_file[i,:],(1,3))
+        part_npy_file = np.concatenate((part_npy_file,tmp))
         if i%5000==0:
             print(i)
         if npy_file[i,2]>18:

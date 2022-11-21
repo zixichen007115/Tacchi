@@ -25,6 +25,14 @@ t = 3
 sigma = 7
 kernel_size = 21
 
+def gaus_noise(image, sigma):
+    row, col = image.shape
+    mean = 0
+    gauss = np.random.normal(mean, sigma, (row, col))
+    gauss = gauss.reshape(row, col)
+    noisy = image + gauss
+    return noisy
+
 def gkern2(kernlen=21, nsig=3):
     """Returns a 2D Gaussian kernel array."""
 
@@ -151,7 +159,9 @@ def phong_illumination(T, source_dir, kd, ks, alpha):
 def generate(obj_depth):
     not_in_touch, in_touch = segments(obj_depth)
     protrusion_depth = protrusion_map(obj_depth, not_in_touch)
-    textured_elastomer_depth = protrusion_depth
+    elastomer_depth = protrusion_depth
+
+    textured_elastomer_depth = gaus_noise(elastomer_depth, 0.000002)
 
     out = ka * background
     out = add_overlay(out, internal_shadow(protrusion_depth), (0.0, 0.0, 0.0))

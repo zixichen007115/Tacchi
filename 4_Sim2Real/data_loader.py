@@ -51,7 +51,7 @@ class CelebA(data.Dataset):
     'wave1'           #20
     ]
 
-        np.random.seed(1)
+        # np.random.seed(1)
         
         for i in range(21):
             test_sample = np.random.randint(99,size=20)
@@ -66,11 +66,15 @@ class CelebA(data.Dataset):
                         num = (j+1)*33+(k+1)*11+d+1
 
                         filename = OBJECT_SET_CLASSES[i] +"__%d__%d_%d_%d.png"%(num,j,k,d)
+                        self.test_dataset.append([filename, label])
+                        # if d!=1:
+                        #     self.train_dataset.append([filename, label])
 
-                        if num-1 in test_sample:
-                            self.test_dataset.append([filename, label])
-                        else:
+                        if num-1 not in test_sample:
                             self.train_dataset.append([filename, label])
+                        #     self.test_dataset.append([filename, label])
+                        # else:
+                        #     self.train_dataset.append([filename, label])
 
  
 
@@ -83,6 +87,7 @@ class CelebA(data.Dataset):
         dataset = self.train_dataset if self.mode == 'train' else self.test_dataset
         filename, label = dataset[index]
         image = Image.open(os.path.join(self.image_dir, filename))
+
         return self.transform(image), torch.FloatTensor(label)
 
     def __len__(self):

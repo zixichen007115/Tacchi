@@ -4,7 +4,7 @@ from os import path
 import argparse 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--particle", type=int , default=5, choices=[5,20,100])
+parser.add_argument("--particle", type=int , default=1, choices=[1,10,100])
 args = parser.parse_args()
 
 url_ply = "ply"

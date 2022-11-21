@@ -4,17 +4,19 @@ import argparse
 import os
 import sys
 
-if not os.path.exists("surface"):
-    os.makedirs("surface")
+
 
 # parameters
 parser = argparse.ArgumentParser()
 parser.add_argument("--object", default="dot_in")
-parser.add_argument("--particle", default="5", choices=["5","20","100"])
+parser.add_argument("--particle", default="1", choices=["1","10","100"])
 parser.add_argument("--x", type=int, default=0)
 parser.add_argument("--y", type=int, default=0)
 
 args = parser.parse_args()
+
+if not os.path.exists("surface"):
+    os.makedirs("surface")
 
 # taichi initialization
 ti.init(arch=ti.gpu) 
@@ -35,8 +37,23 @@ h = 4
 dis = l/(num_l-1)
 
 obj_name = "obj_" + args.particle + "/" + args.object + ".npy"
-data = np.load(obj_name)
+data_ = np.load(obj_name)
+data = data_.copy()
+if args.object == "cross_lines" or args.object == "cylinder_side" or args.object == "hexagon" or args.object == "line":
+  data[:,0]=data_[:,1]
+  data[:,1]=data_[:,0]
+elif args.object == "dots":
+  data[:,1]=-data_[:,1]
+elif args.object == "wave1":
+  data[:,0]=-data_[:,0]
+elif args.object == "moon" or args.object == "pacman":
+  data[:,0]=data_[:,1]
+  data[:,1]=-data_[:,0]
+elif args.object == "triangle":
+  data[:,0]=-data_[:,1]
+  data[:,1]=data_[:,0]
 print(np.shape(data)[0])
+
 
 # grid initialization
 n_grid = 256
@@ -53,9 +70,11 @@ v = ti.Vector.field(3, dtype=float, shape=n_particles) # velocity
 C = ti.Matrix.field(3, 3, dtype=float, shape=n_particles) # affine velocity field
 F = ti.Matrix.field(3, 3, dtype=float, shape=n_particles) # deformation gradient
 material = ti.field(dtype=int, shape=n_particles) # material id
+
+
 p_vol, p_rho = (dx * 0.5)**2, 1
 p_mass = p_vol * p_rho
-E, nu = 1e5, 0.3 # Young's modulus and Poisson's ratio
+E, nu = 1.45e5, 0.45 # Young's modulus and Poisson's ratio
 mu_0, lambda_0 = E / (2 * (1 + nu)), E * nu / ((1+nu) * (1 - 2 * nu)) # Lame parameters - may change these later to model other materials
 
 # np particle position 
@@ -144,6 +163,7 @@ def substep():
     x_2d[p] = [x[p][1]*3-10, x[p][2]*3-10] # update 2d positions
     F[p] = (ti.Matrix.identity(float, 3) + (dt * new_C)) @ F[p] #update F (explicitMPM way)
 
+
 def save(p_xpos_list, p_ypos_list, p_zpos_list):
     x_ = x.to_numpy()
 
@@ -173,6 +193,7 @@ def initialize(data: ti.types.ndarray(),data_len: ti.f32, ind_x: ti.f32, ind_y: 
     F[m] = ti.Matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
     C[m] = ti.Matrix.zero(float, 3, 3)
 
+
   
   for i in ti.ndrange(data_len):
     m = i+num_l*num_w*num_h
@@ -194,17 +215,24 @@ initialize(data, np.shape(data)[0], args.x, args.y)
 # step sim
 while True:
   t_ti[None] += 1
+  p_xpos_list, p_ypos_list, p_zpos_list = save(p_xpos_list, p_ypos_list, p_zpos_list)
+  depth = np.min(p_zpos_list[-1,:])
+
 
   substep()
-  if t_ti[None]<100 and t_ti[None]>=25 and t_ti[None]%2==0:
-    p_xpos_list, p_ypos_list, p_zpos_list = save(p_xpos_list, p_ypos_list, p_zpos_list)
-  elif t_ti[None]==100:
-    np.savez('surface/' + args.particle + '_' +args.object,p_xpos_list=p_xpos_list, p_ypos_list=p_ypos_list, p_zpos_list=p_zpos_list)
-    print("press saved")
-    sys.exit()
+  if t_ti[None]>=30:
+    if (depth-11)>-1e-2:
+      if t_ti[None]%2==0:
+        p_xpos_list, p_ypos_list, p_zpos_list = save(p_xpos_list, p_ypos_list, p_zpos_list)
+    # print(np.min(p_zpos_list[-1,:]))
+
+    else:
+      np.savez('surface/' + args.particle + '_' +args.object,p_xpos_list=p_xpos_list, p_ypos_list=p_ypos_list, p_zpos_list=p_zpos_list)
+      print("press saved")
+      sys.exit()
 
   # taichi gui
-  gui.circles(x_2d.to_numpy()/100, radius=1, color=colors[material.to_numpy()])
-  gui.show() 
+  # gui.circles(x_2d.to_numpy()/100, radius=1, color=colors[material.to_numpy()])
+  # gui.show() 
 
   print(t_ti[None])
