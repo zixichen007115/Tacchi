@@ -25,6 +25,14 @@ t = 3
 sigma = 7
 kernel_size = 21
 
+def gaus_noise(image, sigma):
+    row, col = image.shape
+    mean = 0
+    gauss = np.random.normal(mean, sigma, (row, col))
+    gauss = gauss.reshape(row, col)
+    noisy = image + gauss
+    return noisy
+
 def gkern2(kernlen=21, nsig=3):
     """Returns a 2D Gaussian kernel array."""
 
