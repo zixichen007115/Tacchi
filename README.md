@@ -4,6 +4,9 @@ This repository contains the code for the paper Tacchi: A Pluggable and Fast Gel
 
 <img src="https://github.com/zixichen007115/Tacchi/blob/main/gif/Tacchi.gif" height="250px"> <img src="https://github.com/zixichen007115/Tacchi/blob/main/gif/MuJoCo.gif" height="250px"> <img src="https://github.com/zixichen007115/Tacchi/blob/main/gif/images.gif" height="250px"> 
 
+## Dependencies
+* [taichi 1.0.0](https://github.com/taichi-dev/taichi/releases/tag/v1.0.0)
+
 ## 0_stl2npy
 This package generates object files for Tacchi. To generate objects with different particles,
 
