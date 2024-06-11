@@ -49,6 +49,23 @@ To test a classifier with real images,
 
 `python main.py --mode test --img_kind real --model_name [model name]`
 
+## Citation
+
+We ask that any publications which use Tacchi cite as following:
+
+```
+@article{chen2023tacchi,
+  title={Tacchi: A pluggable and low computational cost elastomer deformation simulator for optical tactile sensors},
+  author={Chen, Zixi and Zhang, Shixin and Luo, Shan and Sun, Fuchun and Fang, Bin},
+  journal={IEEE Robotics and Automation Letters},
+  volume={8},
+  number={3},
+  pages={1239--1246},
+  year={2023},
+  publisher={IEEE}
+}
+
+```
 ---
 
 Thank [Daniel Fernandes Gomes](https://github.com/danfergo) for Gelsight rendering method, alignment method and image evaluation code.
